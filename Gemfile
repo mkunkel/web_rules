@@ -19,6 +19,7 @@ group :test, :development do
   gem 'cucumber-rails', require: false
   gem 'database_cleaner', git: 'https://github.com/bmabey/database_cleaner.git'
   gem 'fabrication'
+  gem 'launchy'
   gem 'nyan-cat-formatter'
   gem 'pry'
   gem 'rspec'

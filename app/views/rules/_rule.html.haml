@@ -1,0 +1,7 @@
+%div{class: "rule #{rule.rule_type}"}
+  .spacer
+  .number
+    - if rule.number
+      %a{name: rule.number}
+  .rule_text
+    = rule.text
