@@ -1,0 +1,2 @@
+Fabricator(:rule) do
+end
