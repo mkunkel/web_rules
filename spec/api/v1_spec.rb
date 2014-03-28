@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Rule do
+describe "v1 api" do
 
   context 'attributes' do
     it { should have_db_column(:number) }
