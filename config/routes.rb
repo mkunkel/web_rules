@@ -6,10 +6,10 @@ WebRules::Application.routes.draw do
   # root 'rules#index'
 
   # Example of regular route:
-    get 'v1/rule/:number' => 'v1#rule'
-    get 'v1/rule/:number1/:number2' => 'v1#range'
-    get 'v1/glossary/:name' => 'v1#glossary'
-    get 'v1/search/:term' => 'v1#search'
+    get 'v1/:release/rule/:number' => 'v1#rule', :as => :rule
+    get 'v1/:release/range/:number1/:number2' => 'v1#range', :as => :range
+    get 'v1/:release/glossary/:name' => 'v1#glossary', :as => :glossary
+    get 'v1/:release/search/:term' => 'v1#search', :as => :search
 
   # Example of named route that can be invoked with purchase_url(id: product.id)
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
