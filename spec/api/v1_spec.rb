@@ -5,28 +5,48 @@ describe "v1 api" do
   context "Properly formed requests" do
     describe "#rule" do
       before(:all) do
-        get "/v1/20140301/rule/1-2-2"
-        @json = JSON.parse(response.body)
+        VCR.use_cassette "rule" do
+          get "/v1/20140301/rule/1-2-2"
+          @json = JSON.parse(response.body)
+        end
       end
 
       it "Should return the right number of results" do
         expect(@json['rule'].count).to be 1
       end
+
+      it "Should return the rule number with dots" do
+        expect(@json['rule'].first['rule_number']).to eq('1.2.2')
+      end
+
       it { response.status.should be 200 }
     end
 
     describe "#range" do
-      before(:each) { get "v1/20140301/range/1-2-2/1-4" }
+      before(:each) do
+        VCR.use_cassette "range" do
+          get "v1/20140301/range/1-2-2/1-4"
+        end
+      end
       it { response.status.should be 200 }
     end
 
     describe "#glossary" do
-      before(:each) { get "v1/20140301/glossary/pass" }
+      before(:each) do
+        VCR.use_cassette "glossary" do
+          get "v1/20140301/glossary/pass"
+        end
+      end
+
       it { response.status.should be 200 }
     end
 
     describe "#search" do
-      before(:each) { get "v1/20140301/search/star" }
+      before(:each) do
+        VCR.use_cassette "search" do
+          get "v1/20140301/search/star"
+        end
+      end
       it { response.status.should be 200 }
     end
   end
