@@ -48,8 +48,14 @@ describe "v1 api" do
       before(:each) do
         VCR.use_cassette "good_range" do
           get "v1/20140301/range/1-2-2/1-4"
+          @json = JSON.parse(response.body)
         end
       end
+
+      it "Should return the right number of results" do
+        expect(@json['rules'].count).to be 13
+      end
+
       it { response.status.should be 200 }
     end
 
