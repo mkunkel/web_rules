@@ -20,3 +20,6 @@
 
 # Ignore all cassettes
 /spec/cassettes/*
+
+# Ignored cached copies
+/lib/assets/rules/*.html

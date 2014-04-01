@@ -21,5 +21,8 @@ group :test, :development do
   gem 'rspec'
   gem 'rspec-rails'
   gem 'vcr'
+end
+
+group :test do
   gem 'webmock'
 end

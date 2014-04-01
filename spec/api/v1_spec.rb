@@ -100,4 +100,30 @@ describe "v1 api" do
   #     it { response.status.should be 200 }
   #   end
   # end
+
+  context "File management" do
+    describe "File does not exist" do
+      before(:each) do
+        @rules_file = "#{Rails.root}/lib/assets/rules/20140301_rules.html"
+        @glossary_file = "#{Rails.root}/lib/assets/rules/20140301_glossary.html"
+        FileUtils.rm @rules_file if File.exists?(@rules_file)
+        FileUtils.rm @glossary_file if File.exists?(@glossary_file)
+      end
+
+      it "Should create a rules file" do
+        VCR.use_cassette "good_rule" do
+          get "/v1/20140301/rule/1-2-2"
+        end
+        expect(File.exists?(@rules_file)).to be true
+      end
+
+      it "Should create a glossary file" do
+        VCR.use_cassette "good_rule" do
+          get "/v1/20140301/rule/1-2-2"
+        end
+        expect(File.exists?(@glossary_file)).to be true
+      end
+    end
+
+  end
 end
