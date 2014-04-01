@@ -100,12 +100,13 @@ class V1Controller < ApplicationController
     glossary_found = false
     open("http://wftda.com/rules/all/#{params[:release]}", 'r') do |file|
       file.each_line do |line|
-        rules.puts line
-        glossary.puts line if glossary_found
         if line.include?('<a id="10"')
           glossary_found = true
-          glossary.puts "<html><body><div>"
+          glossary.puts "<html><body>"
+          rules.puts "</body></html>"
         end
+        rules.puts line unless glossary_found
+        glossary.puts line if glossary_found
       end
     end
     rules.close
