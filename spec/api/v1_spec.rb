@@ -125,5 +125,57 @@ describe "v1 api" do
       end
     end
 
+    describe "File exists" do
+      before(:each) do
+        @rules_file = "#{Rails.root}/lib/assets/rules/20140301_rules.html"
+        @glossary_file = "#{Rails.root}/lib/assets/rules/20140301_glossary.html"
+        FileUtils.touch @rules_file unless File.exists?(@rules_file)
+        FileUtils.touch @glossary_file unless File.exists?(@glossary_file)
+      end
+
+      after(:each) do
+        Timecop.return
+      end
+
+      it "Should create a new rules file if more than 7 days old" do
+        before_time = File.mtime(@rules_file)
+        Timecop.travel(Date.today + 8)
+        VCR.use_cassette "good_rule" do
+          get "/v1/20140301/rule/1-2-2"
+        end
+        after_time = File.mtime(@rules_file)
+        expect(before_time).not_to eq(after_time)
+      end
+
+      it "Should not create a new rules file if less than 7 days old" do
+        before_time = File.mtime(@rules_file)
+        Timecop.travel(Date.today + 6)
+        VCR.use_cassette "good_rule" do
+          get "/v1/20140301/rule/1-2-2"
+        end
+        after_time = File.mtime(@rules_file)
+        expect(before_time).to eq(after_time)
+      end
+
+      it "Should create a new glossary file if more than 7 days old" do
+        before_time = File.mtime(@glossary_file)
+        Timecop.travel(Date.today + 8)
+        VCR.use_cassette "good_rule" do
+          get "/v1/20140301/rule/1-2-2"
+        end
+        after_time = File.mtime(@glossary_file)
+        expect(before_time).not_to eq(after_time)
+      end
+
+      it "Should not create a new glossary file if less than 7 days old" do
+        before_time = File.mtime(@glossary_file)
+        Timecop.travel(Date.today + 6)
+        VCR.use_cassette "good_rule" do
+          get "/v1/20140301/rule/1-2-2"
+        end
+        after_time = File.mtime(@glossary_file)
+        expect(before_time).to eq(after_time)
+      end
+    end
   end
 end

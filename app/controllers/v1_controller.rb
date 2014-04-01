@@ -24,6 +24,7 @@ class V1Controller < ApplicationController
   end
 
   private
+
   def document
     updated_local_files
     Nokogiri::HTML(open(@local_rules))
@@ -51,7 +52,6 @@ class V1Controller < ApplicationController
         rules << {number: text[/^[\d\.]* - /][/^[\d\.]*/], contents: text.gsub(/^[\d\.]* - /, "")}
       end
     else
-      # binding.pry
       text = @doc.xpath("//*[@id='#{params[:number].gsub(/-/, ".")}']").first.parent.css('p').first.text
       rules << {number: text[/^[\d\.]* - /][/^[\d\.]*/], contents: text.gsub(/^[\d\.]* - /, "")}
     end
@@ -73,8 +73,11 @@ class V1Controller < ApplicationController
   def updated_local_files
     @local_rules = "#{Rails.root}/lib/assets/rules/#{params[:release]}_rules.html"
     @local_glossary = "#{Rails.root}/lib/assets/rules/#{params[:release]}_glossary.html"
-
-    write_new_files
+    seven_days = 60 * 60 * 24 * 7
+    files_exist = File.exists?(@local_rules) && File.exists?(@local_glossary)
+    unless files_exist && Time.now - File.mtime(@local_rules) < seven_days
+      write_new_files
+    end
   end
 
   def write_new_files
@@ -88,7 +91,7 @@ class V1Controller < ApplicationController
         glossary.puts line if glossary_found
         if line.include?('<a id="10"')
           glossary_found = true
-          glossary.puts "<html><body>"
+          glossary.puts "<html><body><div>"
         end
       end
     end
