@@ -35,7 +35,7 @@ class V1Controller < ApplicationController
   end
 
   def get_glossary
-    matches = @doc.css('strong').select {|i| i.text.downcase.include?(params[:name])}
+    matches = @doc.css('strong').select {|i| i.text.downcase.include?(params[:name].downcase)}
     matches.map do |match|
       {name: clean_text(match.text),
        definition: clean_text(match.parent.text.gsub(/^#{match.text}/, ""))
