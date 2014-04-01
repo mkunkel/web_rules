@@ -15,7 +15,7 @@ class V1Controller < ApplicationController
 
   def glossary
     @doc = glossary_doc
-    render json: {}, status: :ok
+    render json: {entries: get_glossary}, status: :ok
   end
 
   def search
@@ -25,9 +25,22 @@ class V1Controller < ApplicationController
 
   private
 
+  def clean_text(text)
+    text.gsub(/â\u0080\u0099/, "’").chomp.strip
+  end
+
   def document
     updated_local_files
     Nokogiri::HTML(open(@local_rules))
+  end
+
+  def get_glossary
+    matches = @doc.css('strong').select {|i| i.text.downcase.include?(params[:name])}
+    matches.map do |match|
+      {name: clean_text(match.text),
+       definition: clean_text(match.parent.text.gsub(/^#{match.text}/, ""))
+      }
+    end
   end
 
   def get_range

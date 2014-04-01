@@ -62,8 +62,23 @@ describe "v1 api" do
     describe "#glossary" do
       before(:each) do
         VCR.use_cassette "good_glossary" do
-          get "v1/20140301/glossary/pass"
+          get "v1/20140301/glossary/initiator"
+          @json = JSON.parse(response.body)
         end
+      end
+
+      it "Should return the right number of results" do
+        expect(@json['entries'].count).to be 2
+      end
+
+      it "Should format results correctly" do
+        expected = {"name" => "Initiator of the Assist",
+                    "definition" => "The skater who reaches for, grabs, and/or" \
+                    " pushes a teammate in order to help that teammate. A " \
+                    "skater may also take an assist off of a teammate’s body," \
+                    " and would be initiating their own assist."
+                   }
+        expect(@json['entries'].first).to eq(expected)
       end
 
       it { response.status.should be 200 }
