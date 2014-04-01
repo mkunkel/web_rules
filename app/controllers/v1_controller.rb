@@ -20,7 +20,10 @@ class V1Controller < ApplicationController
 
   def search
     @doc = document
-    render json: {}, status: :ok
+    rules = search_rules
+    @doc = glossary_doc
+    entries = search_glossary
+    render json: {rules: rules, entries: entries}, status: :ok
   end
 
   private
@@ -81,6 +84,23 @@ class V1Controller < ApplicationController
     FileUtils.rm(@local_glossary) if File.exists?(@local_glossary)
     FileUtils.touch(@local_rules)
     FileUtils.touch(@local_glossary)
+  end
+
+  def search_glossary
+    entries = @doc.css('.rule').select{|x| !x.css('strong').empty?}
+    entries = entries.select {|x| x.text.downcase.include?(params[:term].downcase)}
+    entries.map do |i|
+      {
+        name: clean_text(i.css('strong').text),
+        definition: clean_text(i.text.gsub(/#{i.css('strong').text}/, ''))
+      }
+    end
+  end
+
+  def search_rules
+    rules = @doc.css('.rule')
+    rules = rules.select {|rule| rule.text.downcase.include?(params[:term])}
+    rules.map {|rule| {number: rule.text[/^[\d\.]* - /][/^[\d\.]*/], contents: clean_text(rule.text.gsub(/^[\d\.]* - /, ""))}}
   end
 
   def updated_local_files

@@ -74,9 +74,10 @@ describe "v1 api" do
       it "Should format results correctly" do
         expected = {"name" => "Initiator of the Assist",
                     "definition" => "The skater who reaches for, grabs, and/or" \
-                    " pushes a teammate in order to help that teammate. A " \
-                    "skater may also take an assist off of a teammate’s body," \
-                    " and would be initiating their own assist."
+                                    " pushes a teammate in order to help that " \
+                                    "teammate. A skater may also take an assist" \
+                                    " off of a teammate’s body, and would be" \
+                                    " initiating their own assist."
                    }
         expect(@json['entries'].first).to eq(expected)
       end
@@ -87,9 +88,42 @@ describe "v1 api" do
     describe "#search" do
       before(:each) do
         VCR.use_cassette "good_search" do
-          get "v1/20140301/search/star"
+          get "v1/20140301/search/jump"
+          @json = JSON.parse(response.body)
         end
       end
+
+      it "Should return the right number of rules" do
+        expect(@json['rules'].count).to be 5
+      end
+
+      it "Should format rules properly" do
+        expected = {
+                     "number" => "5.8.7",
+                     "contents" => "If a skater jumps and ceases all contact " \
+                                    "with the ground, the skater’s prior in-" \
+                                    "bounds/out-of-bounds status is maintained " \
+                                    "until contact with the ground re-establish" \
+                                    "es in-bounds/out-of-bounds status."
+                   }
+        expect(@json['rules'].first).to eq(expected)
+      end
+
+      it "Should return the right number of glossary entries" do
+        expect(@json['entries'].count).to be 1
+      end
+
+      it "Should format glossary entries properly" do
+        expected = {
+                     "name" => "Apex Jump",
+                     "definition" => "An attempt to legally shorten the distan" \
+                                     "ce travelled around the curve of the track" \
+                                     " by leaping over the track boundary and" \
+                                     " landing back in bounds."
+                   }
+        expect(@json['entries'].first).to eq(expected)
+      end
+
       it { response.status.should be 200 }
     end
   end
